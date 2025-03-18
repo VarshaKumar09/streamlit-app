@@ -1,8 +1,10 @@
-import streamlit as st
+from flask import Flask
 
-st.title("Simple Streamlit App")
-st.write("Hello, welcome to my first web app!")
+app = Flask(__name__)
 
-name = st.text_input("Enter your name:")
-if st.button("Submit"):
-    st.write(f"Hello, {name}!")
+@app.route('/')
+def home():
+    return "Hello, World! This is a simple web app using Flask."
+
+if __name__ == '__main__':
+    app.run(debug=True)
