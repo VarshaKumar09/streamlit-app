@@ -1,10 +1,25 @@
-from flask import Flask
+from flask import Flask, request, render_template
+import requests
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "Hello, World! This is a simple web app using Flask."
+API_KEY = "414d9d82ac04d8a6f46bb89389059d2d"  # Replace with your OpenWeatherMap API key
+BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    weather_data = None
+    if request.method == "POST":
+        city = request.form.get("city")
+        if city:
+            params = {"q": city, "appid": API_KEY, "units": "metric"}
+            response = requests.get(BASE_URL, params=params)
+            if response.status_code == 200:
+                weather_data = response.json()
+            else:
+                weather_data = {"error": "City not found"}
+
+    return render_template("index.html", weather=weather_data)
+
+if __name__ == "__main__":
+    app.run(debug=True)
